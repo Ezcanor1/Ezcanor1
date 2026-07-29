@@ -13,6 +13,9 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Generate snake SVG
         uses: Platane/snk/svg-only@v3
         with:
@@ -21,10 +24,13 @@ jobs:
             dist/github-snake.svg
             dist/github-snake-dark.svg?palette=github-dark
 
-      - name: Push SVG to output branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: output
-          force_orphan: true
+      - name: Push to output branch
+        run: |
+          cd dist
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b output
+          git add .
+          git commit -m "Update snake animation"
+          git push --force "https://${{ secrets.GITHUB_TOKEN }}@github.com/Ezcanor1/Ezcanor1.git" output
